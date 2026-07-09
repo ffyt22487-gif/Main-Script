@@ -3,42 +3,52 @@ const fs = require("fs");
 
 const app = express();
 
-const API_KEY = process.env.API_KEY;
+const API_KEY = process.env.API_KEY || "SEIHUB_2026_XYZ";
 
 app.get("/", (req, res) => {
-    res.send(`
+    res.status(200).send(`
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SeiHub</title>
+<title>SeiHub API</title>
 <style>
-body{
+*{
     margin:0;
-    background:#111;
-    color:white;
+    padding:0;
+    box-sizing:border-box;
+}
+body{
+    background:#0f0f0f;
+    color:#fff;
+    font-family:Arial,sans-serif;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
-    font-family:Arial,sans-serif;
 }
-.box{
+.card{
     text-align:center;
+    padding:40px;
+    border-radius:15px;
+    background:#1a1a1a;
+    box-shadow:0 0 20px rgba(0,0,0,.5);
 }
 h1{
     font-size:40px;
+    color:#8b5cf6;
 }
 p{
-    color:#999;
+    margin-top:10px;
+    color:#aaa;
 }
 </style>
 </head>
 <body>
-<div class="box">
+<div class="card">
 <h1>SeiHub API</h1>
-<p>Server is running.</p>
+<p>API Server Online</p>
 </div>
 </body>
 </html>
@@ -50,13 +60,12 @@ app.get("/script", (req, res) => {
         return res.status(404).send("Not Found");
     }
 
-    try {
-        const script = fs.readFileSync("main.lua", "utf8");
-        res.setHeader("Content-Type", "text/plain");
-        res.send(script);
-    } catch {
-        res.status(500).send("Internal Server Error");
+    if (!fs.existsSync("./main.lua")) {
+        return res.status(500).send("main.lua not found");
     }
+
+    res.type("text/plain");
+    res.send(fs.readFileSync("./main.lua", "utf8"));
 });
 
 app.use((req, res) => {
@@ -64,8 +73,7 @@ app.use((req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
