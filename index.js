@@ -3,7 +3,7 @@ const fs = require("fs");
 
 const app = express();
 
-const API_KEY = "FreeFire598";
+const API_KEY = process.env.API_KEY;
 
 app.get("/", (req, res) => {
     res.send("SeiHub API Online");
